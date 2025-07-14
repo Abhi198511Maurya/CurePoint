@@ -2,6 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-.active hr{
-  @apply block
+.active hr {
+  @apply block;
 }

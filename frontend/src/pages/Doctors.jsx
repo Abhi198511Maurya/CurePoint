@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const Doctor = () => {
-  return (
-    <div>
-        Doctor Page
-    </div>
-  )
-}
+  return <div>Doctor Page</div>;
+};
 
-export default Doctor
+export default Doctor;

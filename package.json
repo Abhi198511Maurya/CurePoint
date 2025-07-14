@@ -1,0 +1,28 @@
+{
+  "name": "curepoint",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "lint": "npx eslint .",
+    "prettier": "npx lint-staged"
+  },
+  "lint-staged": {
+    "*.{js,jsx,mjs}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@eslint/js": "^9.31.0",
+    "eslint": "^9.31.0",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^16.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.6.2"
+  }
+}

@@ -1,0 +1,10 @@
+# Ignore config files
+.eslintignore
+.prettierignore
+
+# Dependency directories
+node_modules/
+
+# IDEs/editors
+.vscode/
+*.log
