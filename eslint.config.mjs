@@ -3,7 +3,7 @@ import globals from "globals";
 import pluginReact from "eslint-plugin-react";
 import { defineConfig } from "eslint/config";
 
-// const temp = "temp";
+const temp = "temp";
 export default defineConfig([
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
