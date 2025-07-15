@@ -12,7 +12,11 @@ export default defineConfig([
     ],
     plugins: { js },
     extends: ["js/recommended"],
-    rules: { "react/react-in-jsx-scope": "off", "no-unused-vars": "off" },
+    rules: {
+      "react/react-in-jsx-scope": "off",
+      "no-unused-vars": "off",
+      "react/prop-types": "off",
+    },
   },
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
