@@ -29,7 +29,9 @@ const Login = () => {
         }
       } else {
       }
-    } catch (error) {}
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (

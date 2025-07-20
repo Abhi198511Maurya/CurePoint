@@ -1,6 +1,7 @@
 # Ignore config files
 .eslintignore
 .prettierignore
+.env
 
 # Dependency directories
 node_modules/
