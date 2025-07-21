@@ -6,7 +6,7 @@ import { defineConfig } from "eslint/config";
 export default defineConfig([
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
-    ignores: ["node_modules/**", ".husky/**"],
+    ignores: ["node_modules/**", ".husky/**", "dist/**", "build/**"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
@@ -22,10 +22,13 @@ export default defineConfig([
     },
     plugins: {
       react: pluginReact,
+      js,
     },
+    extends: ["js/recommended"],
     rules: {
       "react/react-in-jsx-scope": "off",
       "react/prop-types": "off",
+      "no-empty": "error",
       "no-unused-vars": "off",
     },
   },

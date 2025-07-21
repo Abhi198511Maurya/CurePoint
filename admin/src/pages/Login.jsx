@@ -27,7 +27,6 @@ const Login = () => {
         } else {
           toast.error(data.message);
         }
-      } else {
       }
     } catch (error) {
       toast.error(error.message);
