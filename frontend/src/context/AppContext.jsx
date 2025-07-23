@@ -50,6 +50,7 @@ const AppContextProvider = (props) => {
 
   const value = {
     doctors,
+    getDoctorsData,
     currencySimbol,
     token,
     setToken,
