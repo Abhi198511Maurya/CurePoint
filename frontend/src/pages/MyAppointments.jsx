@@ -25,7 +25,7 @@ const MyAppointments = () => {
     "Dec",
   ];
 
-  const slotDateFormate = (slotDate) => {
+  const slotDateFormat = (slotDate) => {
     const dateArray = slotDate.split("_");
     return (
       dateArray[0] + " " + months[Number(dateArray[1])] + " " + dateArray[2]
@@ -152,7 +152,7 @@ const MyAppointments = () => {
                 <span className="text-sm text-netural-700 font-medium">
                   Date & Time:
                 </span>{" "}
-                {slotDateFormate(item.slotDate)} | {item.slotTime}
+                {slotDateFormat(item.slotDate)} | {item.slotTime}
               </p>
             </div>
             <div></div>
