@@ -3,11 +3,12 @@ import jwt from "jsonwebtoken";
 // admin authentication middleware
 const authAdmin = async (req, res, next) => {
   try {
-    const { atoken } = req.headers;
+    const { atoken } = req.cookies;
+
     if (!atoken) {
       return res.json({
         success: false,
-        message: "Not Authorized Login again",
+        message: "Admin not authorized login again!",
       });
     }
     const tokenDecode = jwt.verify(atoken, process.env.JWT_SECRET);

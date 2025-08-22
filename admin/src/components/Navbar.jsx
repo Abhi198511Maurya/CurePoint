@@ -4,19 +4,45 @@ import { useContext } from "react";
 import { AdminContext } from "../context/AdminContext";
 import { useNavigate } from "react-router-dom";
 import { DoctorContext } from "../context/DoctorContext";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const Navbar = () => {
-  const { aToken, setAToken } = useContext(AdminContext);
-  const { dToken, setDToken } = useContext(DoctorContext);
+  const { admin, setAdmin, backendUrl } = useContext(AdminContext);
+  const { doctor, setDoctor } = useContext(DoctorContext);
 
   const navigate = useNavigate();
 
-  const logout = () => {
-    navigate("/");
-    aToken && setAToken("");
-    aToken && localStorage.removeItem("aToken");
-    dToken && setDToken("");
-    dToken && localStorage.removeItem("dToken");
+  const logout = async () => {
+    try {
+      if (admin) {
+        const { data } = await axios.post(
+          backendUrl + "/api/admin/logout",
+          {},
+          { withCredentials: true },
+        );
+        if (data.success) {
+          navigate("/");
+          setAdmin(false);
+        } else {
+          toast.error(data.message);
+        }
+      } else if (doctor) {
+        const { data } = await axios.post(
+          backendUrl + "/api/doctor/logout",
+          {},
+          { withCredentials: true },
+        );
+        if (data.success) {
+          navigate("/");
+          setDoctor(false);
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -28,7 +54,7 @@ const Navbar = () => {
           alt=""
         />
         <p className="border px-2.5 py-0.5 rounded-full border-gray-500 text-gray-600">
-          {aToken ? "Admin" : "Doctor"}
+          {admin ? "Admin" : "Doctor"}
         </p>
       </div>
       <button

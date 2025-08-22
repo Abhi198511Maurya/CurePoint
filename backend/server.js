@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import "dotenv/config";
 import connectDB from "./config/mongodb.js";
 import connectCloudinary from "./config/cloudinary.js";
@@ -15,7 +16,13 @@ connectCloudinary();
 
 // middlewares
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "http://localhost:5174"],
+    credentials: true,
+  }),
+);
+app.use(cookieParser());
 
 // api endpoints
 app.use("/api/admin", adminRouter);

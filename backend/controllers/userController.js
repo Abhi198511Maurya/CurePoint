@@ -38,7 +38,16 @@ const registerUser = async (req, res) => {
     const newUser = new userModel(userdata);
     const user = await newUser.save();
 
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
+
+    res.cookie("utoken", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     res.json({ success: true, token });
   } catch (error) {
@@ -60,7 +69,17 @@ const loginUser = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (isMatch) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      res.cookie("utoken", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
       res.json({ success: true, token });
     } else {
       res.json({ success: false, message: "Invalid credentials" });
@@ -71,10 +90,25 @@ const loginUser = async (req, res) => {
   }
 };
 
+const logoutUser = async (req, res) => {
+  try {
+    res.clearCookie("utoken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({ success: true, message: "logged out!" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 // API to get user profile data
 const getProfile = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = res.locals;
     const userData = await userModel.findById(userId).select("-password");
 
     res.json({ success: true, userData });
@@ -87,7 +121,8 @@ const getProfile = async (req, res) => {
 // API to update user profile
 const updateProfile = async (req, res) => {
   try {
-    const { userId, name, phone, address, dob, gender } = req.body;
+    const { userId } = res.locals;
+    const { name, phone, address, dob, gender } = req.body;
     const imageFile = req.file;
 
     if (!userId || !name || !phone || !address || !dob || !gender) {
@@ -122,7 +157,8 @@ const updateProfile = async (req, res) => {
 // API to book appointment
 const bookAppointment = async (req, res) => {
   try {
-    const { userId, docId, slotDate, slotTime } = req.body;
+    const { userId } = res.locals;
+    const { docId, slotDate, slotTime } = req.body;
 
     const docData = await doctorModel.findById(docId).select("-password");
 
@@ -176,7 +212,7 @@ const bookAppointment = async (req, res) => {
 // API to get user appointments for frontend my-appointments page
 const listAppointment = async (req, res) => {
   try {
-    const { userId } = req.body;
+    const { userId } = res.locals;
     const appointments = await appointmentModel.find({ userId });
 
     res.json({ success: true, appointments });
@@ -189,7 +225,8 @@ const listAppointment = async (req, res) => {
 // API to cancel appointment
 const cancelAppointment = async (req, res) => {
   try {
-    const { userId, appointmentId } = req.body;
+    const { userId } = res.locals;
+    const { appointmentId } = req.body;
     const appointmentData = await appointmentModel.findById(appointmentId);
 
     // verify appointment user
@@ -282,6 +319,7 @@ const verifyRazorpay = async (req, res) => {
 export {
   registerUser,
   loginUser,
+  logoutUser,
   getProfile,
   updateProfile,
   bookAppointment,

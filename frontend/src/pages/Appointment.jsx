@@ -8,7 +8,7 @@ import axios from "axios";
 
 const Appointment = () => {
   const { docId } = useParams();
-  const { doctors, currencySimbol, backendUrl, token, getDoctorsData } =
+  const { doctors, currencySimbol, backendUrl, user, getDoctorsData } =
     useContext(AppContext);
   const daysOfWeek = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
 
@@ -29,15 +29,17 @@ const Appointment = () => {
 
     // getting current date
     let today = new Date();
+    let addedDays = 0;
+    let dayOffset = 0;
 
-    for (let i = 0; i < 7; i++) {
-      // getting date with index
+    while (addedDays < daysOfWeek.length) {
+      // getting date with dayoffset
       let currDate = new Date(today);
-      currDate.setDate(today.getDate() + i);
+      currDate.setDate(today.getDate() + dayOffset);
 
-      // settung end time of the date with index
+      // setting end time of the date with index
       let endTime = new Date();
-      endTime.setDate(today.getDate() + i);
+      endTime.setDate(today.getDate() + dayOffset);
       endTime.setHours(21, 0, 0, 0);
 
       // setting hours
@@ -66,10 +68,7 @@ const Appointment = () => {
         const slotTime = formattedTime;
 
         const isSlotAvailable =
-          docInfo.slots_booked[slotDate] &&
-          docInfo.slots_booked[slotDate].includes(slotTime)
-            ? false
-            : true;
+          !docInfo?.slots_booked[slotDate]?.includes(slotTime);
 
         if (isSlotAvailable) {
           // add slot to array
@@ -84,12 +83,15 @@ const Appointment = () => {
       }
       if (timeSlots.length > 0) {
         setDocSlots((prev) => [...prev, timeSlots]);
+        addedDays++;
       }
+
+      dayOffset++;
     }
   };
 
   const bookAppointment = async () => {
-    if (!token) {
+    if (!user) {
       toast.warn("Login to book appointment!");
       return navigate("/login");
     }
@@ -102,12 +104,11 @@ const Appointment = () => {
       let year = date.getFullYear();
 
       const slotDate = day + "_" + month + "_" + year;
-      console.log(slotDate);
 
       const { data } = await axios.post(
         backendUrl + "/api/user/book-appointment",
         { docId, slotDate, slotTime },
-        { headers: { token } },
+        { withCredentials: true },
       );
       if (data.success) {
         toast.success(data.message);
@@ -117,7 +118,6 @@ const Appointment = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
       toast.error(error.message);
     }
   };

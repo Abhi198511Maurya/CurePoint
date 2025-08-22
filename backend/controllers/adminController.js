@@ -97,12 +97,35 @@ const loginAdmin = async (req, res) => {
       password === process.env.ADMIN_PASSWORD
     ) {
       const token = jwt.sign(email + password, process.env.JWT_SECRET);
+
+      res.cookie("atoken", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
       res.json({ success: true, token });
     } else {
       res.json({ success: false, message: "Invalid credentials" });
     }
   } catch (error) {
     console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const logoutAdmin = async (req, res) => {
+  try {
+    res.clearCookie("atoken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({ success: true, message: "logged out!" });
+  } catch (error) {
     res.json({ success: false, message: error.message });
   }
 };
@@ -187,6 +210,7 @@ const adminDashboard = async (req, res) => {
 export {
   addDoctor,
   loginAdmin,
+  logoutAdmin,
   allDoctors,
   appointmentsAdmin,
   appointmentCancel,

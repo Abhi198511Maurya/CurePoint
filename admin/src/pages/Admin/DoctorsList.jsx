@@ -4,14 +4,14 @@ import { AdminContext } from "../../context/AdminContext";
 import { useEffect } from "react";
 
 const DoctorsList = () => {
-  const { doctors, aToken, getAllDoctors, changeAvailability } =
+  const { doctors, admin, getAllDoctors, changeAvailability } =
     useContext(AdminContext);
 
   useEffect(() => {
-    if (aToken) {
+    if (admin) {
       getAllDoctors();
     }
-  }, [aToken]);
+  }, [admin]);
 
   return (
     <div className="m-5 max-h-[90vh] overflow-y-scroll">

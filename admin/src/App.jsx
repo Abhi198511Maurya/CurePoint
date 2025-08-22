@@ -17,10 +17,10 @@ import DoctorAppointments from "./pages/Doctor/DoctorAppointments";
 import DoctorProfile from "./pages/Doctor/DoctorProfile";
 
 const App = () => {
-  const { aToken } = useContext(AdminContext);
-  const { dToken } = useContext(DoctorContext);
+  const { admin } = useContext(AdminContext);
+  const { doctor } = useContext(DoctorContext);
 
-  return aToken || dToken ? (
+  return admin || doctor ? (
     <div className="bg-[#F8F9FD]">
       <ToastContainer />
       <Navbar />

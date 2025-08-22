@@ -6,15 +6,15 @@ import { assets } from "../../assets/assets";
 import { AppContext } from "../../context/AppContext";
 
 const Dashboard = () => {
-  const { dashData, getDashData, cancelAppointment, aToken } =
+  const { dashData, getDashData, cancelAppointment, admin } =
     useContext(AdminContext);
   const { slotDateFormat } = useContext(AppContext);
 
   useEffect(() => {
-    if (aToken) {
+    if (admin) {
       getDashData();
     }
-  }, [aToken]);
+  }, [admin]);
 
   return (
     dashData && (

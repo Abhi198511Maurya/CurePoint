@@ -1,8 +1,8 @@
 import React, { createContext, useEffect, useState } from "react";
-import { doctors } from "../assets/assets";
 import axios from "axios";
 import { toast } from "react-toastify";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext();
 
 const AppContextProvider = (props) => {
@@ -10,40 +10,38 @@ const AppContextProvider = (props) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const [doctors, setDoctors] = useState([]);
-  const [token, setToken] = useState(
-    localStorage.getItem("token") ? localStorage.getItem("token") : false,
-  );
-  const [userData, setUserData] = useState(false);
+
+  const [user, setUser] = useState(false);
+
+  const [userProfileData, setUserProfileData] = useState(false);
 
   const getDoctorsData = async () => {
     try {
-      const { data } = await axios.get(backendUrl + "/api/doctor/list");
+      const { data } = await axios.get(backendUrl + "/api/doctor/list", {
+        withCredentials: true,
+      });
       if (data.success) {
         setDoctors(data.doctors);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
       toast.error(error.message);
     }
   };
 
   const loadUserProfileData = async () => {
     try {
-      const { data } = await axios.post(
-        backendUrl + "/api/user/get-profile",
-        {}, // empty body (or you can pass extra data if needed)
-        { headers: { token } },
-      );
+      const { data } = await axios.get(backendUrl + "/api/user/get-profile", {
+        withCredentials: true,
+      });
 
       if (data.success) {
-        setUserData(data.userData);
+        setUserProfileData(data.userData);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      console.log(error);
       toast.error(error.message);
     }
   };
@@ -52,11 +50,11 @@ const AppContextProvider = (props) => {
     doctors,
     getDoctorsData,
     currencySimbol,
-    token,
-    setToken,
+    user,
+    setUser,
     backendUrl,
-    userData,
-    setUserData,
+    userProfileData,
+    setUserProfileData,
     loadUserProfileData,
   };
 
@@ -65,12 +63,12 @@ const AppContextProvider = (props) => {
   }, []);
 
   useEffect(() => {
-    if (token) {
+    if (user) {
       loadUserProfileData();
     } else {
-      setUserData(false);
+      setUserProfileData(false);
     }
-  }, [token]);
+  }, [user]);
 
   return (
     <AppContext.Provider value={value}>{props.children}</AppContext.Provider>

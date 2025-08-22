@@ -5,6 +5,7 @@ import {
   getProfile,
   listAppointment,
   loginUser,
+  logoutUser,
   paymentRazorpay,
   registerUser,
   updateProfile,
@@ -17,8 +18,9 @@ const userRouter = express.Router();
 
 userRouter.post("/register", registerUser);
 userRouter.post("/login", loginUser);
+userRouter.post("/logout", logoutUser);
 
-userRouter.post("/get-profile", authUser, getProfile);
+userRouter.get("/get-profile", authUser, getProfile);
 userRouter.post(
   "/update-profile",
   upload.single("image"),
@@ -26,7 +28,7 @@ userRouter.post(
   updateProfile,
 );
 userRouter.post("/book-appointment", authUser, bookAppointment);
-userRouter.post("/appointments", authUser, listAppointment);
+userRouter.get("/appointments", authUser, listAppointment);
 userRouter.post("/cancel-appointment", authUser, cancelAppointment);
 userRouter.post("/payment-razorpay", authUser, paymentRazorpay);
 userRouter.post("/verifyRazorpay", authUser, verifyRazorpay);

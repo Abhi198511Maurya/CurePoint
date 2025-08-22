@@ -6,12 +6,12 @@ import { assets } from "../assets/assets";
 import { DoctorContext } from "../context/DoctorContext";
 
 const Sidebar = () => {
-  const { aToken } = useContext(AdminContext);
-  const { dToken } = useContext(DoctorContext);
+  const { admin } = useContext(AdminContext);
+  const { doctor } = useContext(DoctorContext);
 
   return (
     <div className="min-h-screen bg-white border-r">
-      {aToken && (
+      {admin && (
         <ul className="text-[#515151] mt-5">
           <NavLink
             className={({ isActive }) =>
@@ -52,7 +52,7 @@ const Sidebar = () => {
         </ul>
       )}
 
-      {dToken && (
+      {doctor && (
         <ul className="text-[#515151] mt-5">
           <NavLink
             className={({ isActive }) =>

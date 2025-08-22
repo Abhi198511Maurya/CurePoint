@@ -31,15 +31,25 @@ const doctorList = async (req, res) => {
 const loginDoctor = async (req, res) => {
   try {
     const { email, password } = req.body;
-    const doctor = await doctorModel.findOne({ email });
     if (!email) {
       return res.json({ success: false, message: "Invalid credentials!" });
     }
+    const doctor = await doctorModel.findOne({ email });
 
     const isMatch = await bcrypt.compare(password, doctor.password);
 
     if (isMatch) {
-      const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET);
+      const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET, {
+        expiresIn: "7d",
+      });
+
+      res.cookie("dtoken", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
       res.json({ success: true, token });
     } else {
       res.json({ success: false, message: "Invalid Credentials!" });
@@ -50,10 +60,25 @@ const loginDoctor = async (req, res) => {
   }
 };
 
+const logoutDoctor = async (req, res) => {
+  try {
+    res.clearCookie("dtoken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return res.json({ success: true, message: "logged out!" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
 // API to get appointments of a doctor
 const appointmentsDoctor = async (req, res) => {
   try {
-    const { docId } = req.body;
+    const { docId } = res.locals;
     const appointments = await appointmentModel.find({ docId });
 
     res.json({ success: true, appointments });
@@ -66,7 +91,8 @@ const appointmentsDoctor = async (req, res) => {
 // API to mark appointments completed for doctor panel
 const appointmentComplete = async (req, res) => {
   try {
-    const { docId, appointmentId } = req.body;
+    const { docId } = res.locals;
+    const { appointmentId } = req.body;
     const apppointmentData = await appointmentModel.findById(appointmentId);
 
     if (apppointmentData && apppointmentData.docId === docId) {
@@ -86,7 +112,8 @@ const appointmentComplete = async (req, res) => {
 // API to cancel appointments
 const appointmentCancel = async (req, res) => {
   try {
-    const { docId, appointmentId } = req.body;
+    const { docId } = res.locals;
+    const { appointmentId } = req.body;
     const apppointmentData = await appointmentModel.findById(appointmentId);
 
     if (apppointmentData && apppointmentData.docId === docId) {
@@ -106,7 +133,7 @@ const appointmentCancel = async (req, res) => {
 // API to get the dashboard data for doctor panel
 const doctorDashboard = async (req, res) => {
   try {
-    const { docId } = req.body;
+    const { docId } = res.locals;
 
     const appointments = await appointmentModel.find({ docId });
     let earnings = 0;
@@ -141,7 +168,7 @@ const doctorDashboard = async (req, res) => {
 // API to get doctor profile for doctor panel
 const doctorProfile = async (req, res) => {
   try {
-    const { docId } = req.body;
+    const { docId } = res.locals;
     const profileData = await doctorModel.findById(docId).select("-password");
 
     res.json({ success: true, profileData });
@@ -154,7 +181,8 @@ const doctorProfile = async (req, res) => {
 // API to update doctor profile data from doctor panel
 const updateDoctorProfile = async (req, res) => {
   try {
-    const { docId, fees, address, available } = req.body;
+    const { docId } = res.locals;
+    const { fees, address, available } = req.body;
 
     await doctorModel.findByIdAndUpdate(docId, { fees, address, available });
 
@@ -169,6 +197,7 @@ export {
   changeAvailablity,
   doctorList,
   loginDoctor,
+  logoutDoctor,
   appointmentsDoctor,
   appointmentCancel,
   appointmentComplete,
