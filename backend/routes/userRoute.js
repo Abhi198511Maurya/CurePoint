@@ -8,7 +8,9 @@ import {
   logoutUser,
   paymentRazorpay,
   registerUser,
+  sendOtp,
   updateProfile,
+  verifyOtp,
   verifyRazorpay,
 } from "../controllers/userController.js";
 import authUser from "../middlewares/authUser.js";
@@ -19,6 +21,9 @@ const userRouter = express.Router();
 userRouter.post("/register", registerUser);
 userRouter.post("/login", loginUser);
 userRouter.post("/logout", logoutUser);
+
+userRouter.post("/send-otp", sendOtp);
+userRouter.post("/verify-otp", verifyOtp);
 
 userRouter.get("/get-profile", authUser, getProfile);
 userRouter.post(

@@ -6,14 +6,22 @@ import { v2 as cloudinary } from "cloudinary";
 import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js";
 import razorpay from "razorpay";
+import transporter from "../config/nodemailer.js";
+import otpModel from "../models/otpModel.js";
 
 // API to register user
 const registerUser = async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
+  const { name, email, password, otpCode } = req.body;
 
-    if (!name || !password || !email) {
-      return res.json({ success: false, message: "Missing detailes!" });
+  if (!name || !password || !email || !otpCode) {
+    return res.json({ success: false, message: "Missing detailes!" });
+  }
+
+  try {
+    const existingUser = await userModel.findOne({ email });
+
+    if (existingUser) {
+      return res.json({ success: false, message: "User Already Exist!" });
     }
 
     if (!validator.isEmail(email)) {
@@ -36,6 +44,18 @@ const registerUser = async (req, res) => {
     };
 
     const newUser = new userModel(userdata);
+
+    const otp = await otpModel.findOne({ email });
+
+    if (!otp || otp.verifyOtp !== otpCode || otp.verifyOtp === "") {
+      return res.json({ success: false, message: "Verify your otp!" });
+    }
+
+    if (otp.verifyOtp === otpCode) {
+      newUser.isAccountVerified = true;
+      await otp.deleteOne({ email });
+    }
+
     const user = await newUser.save();
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
@@ -66,6 +86,10 @@ const loginUser = async (req, res) => {
       return res.json({ success: false, message: "User does not found" });
     }
 
+    if (!user.isAccountVerified) {
+      return res.json({ success: false, message: "Verify your email!" });
+    }
+
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (isMatch) {
@@ -90,6 +114,7 @@ const loginUser = async (req, res) => {
   }
 };
 
+// API for user logout
 const logoutUser = async (req, res) => {
   try {
     res.clearCookie("utoken", {
@@ -100,6 +125,102 @@ const logoutUser = async (req, res) => {
     });
 
     return res.json({ success: true, message: "logged out!" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// API to send OTP
+const sendOtp = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.json({ success: false, message: "Missing Details!" });
+  }
+
+  if (!validator.isEmail(email)) {
+    return res.json({ success: false, message: "Enter a valid email!" });
+  }
+
+  try {
+    const user = await userModel.findOne({ email });
+
+    if (user) {
+      return res.json({ success: false, message: "Account already exists!" });
+    }
+
+    if (user?.isAccountVerified) {
+      return res.json({ success: false, message: "Account already verified!" });
+    }
+
+    const otpCode = String(Math.floor(100000 + Math.random() * 900000));
+
+    const newOtpModel = await otpModel.findOne({ email });
+
+    if (!newOtpModel) {
+      await otpModel.create({
+        email,
+        verifyOtp: otpCode,
+        verifyOtpExpireAt: Date.now() + 60 * 60 * 1000,
+      });
+    } else {
+      newOtpModel.verifyOtp = otpCode;
+      newOtpModel.verifyOtpExpireAt = Date.now() + 60 * 60 * 1000;
+      await newOtpModel.save();
+    }
+
+    const mailOption = {
+      from: process.env.SENDER_EMAIL,
+      to: email,
+      subject: "Account verifycation OTP!",
+      text: `Your otp is ${otpCode}. Verify your account using this OTP!`,
+    };
+
+    await transporter.sendMail(mailOption);
+
+    res.json({ success: true, message: "OTP sent successfully!" });
+  } catch (error) {
+    console.log(error);
+
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const verifyOtp = async (req, res) => {
+  const { email, otpCode } = req.body;
+
+  if (!email || !otpCode) {
+    return res.json({ success: false, message: "Missing Details!" });
+  }
+
+  try {
+    const otp = await otpModel.findOne({ email });
+    if (!otp) {
+      return res.json({ success: false, message: "Please send otp!" });
+    }
+
+    const user = await userModel.findOne({ email });
+    if (user?.isAccountVerified) {
+      return res.json({ success: false, message: "Account already verified!" });
+    }
+
+    if (otp.verifyOtp !== otpCode || otp.verifyOtp === "") {
+      return res.json({ success: false, message: "Invalid OTP!" });
+    }
+
+    if (otp.verifyOtpExpireAt < Date.now()) {
+      return res.json({ success: false, message: "OTP expired!" });
+    }
+
+    if (user) {
+      user.isAccountVerified = true;
+      await user.save();
+    }
+
+    return res.json({
+      success: true,
+      message: "Email verifired successfully!",
+    });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
@@ -320,6 +441,8 @@ export {
   registerUser,
   loginUser,
   logoutUser,
+  sendOtp,
+  verifyOtp,
   getProfile,
   updateProfile,
   bookAppointment,

@@ -3,6 +3,7 @@ import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Check, X } from "lucide-react";
 
 const Login = () => {
   const { backendUrl, user, setUser } = useContext(AppContext);
@@ -13,6 +14,8 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
+  const [otpCode, setOtpCode] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
 
   const onSubmitHandler = async (event) => {
     event.preventDefault();
@@ -25,6 +28,7 @@ const Login = () => {
             name,
             password,
             email,
+            otpCode,
           },
           { withCredentials: true },
         );
@@ -53,11 +57,53 @@ const Login = () => {
     }
   };
 
+  const sendOtpCode = async () => {
+    try {
+      const { data } = await axios.post(
+        backendUrl + "/api/user/send-otp",
+        { email },
+        { withCredentials: true },
+      );
+      if (data.success) {
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const verifyOtpCode = async () => {
+    try {
+      const { data } = await axios.post(
+        backendUrl + "/api/user/verify-otp",
+        { email, otpCode },
+        { withCredentials: true },
+      );
+      if (data.success) {
+        setIsVerified(true);
+        toast.success(data.message);
+      } else {
+        setIsVerified(false);
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user]);
+
+  useEffect(() => {
+    if (otpCode.length === 6) {
+      verifyOtpCode();
+    }
+  }, [otpCode]);
 
   return (
     <form onSubmit={onSubmitHandler} className="min-h-[80vh] flex items-center">
@@ -105,9 +151,42 @@ const Login = () => {
             required
           />
         </div>
+        {state === "Sign Up" && (
+          <div className="w-full relative">
+            <p>Enter OTPCode</p>
+            <input
+              className={`border rounded w-full p-2 mt-1 focus:outline-none  ${isVerified ? "border-green-500" : otpCode.length > 0 ? "border-red-500" : "border-gray-300"}`}
+              type="text"
+              onChange={(e) => setOtpCode(e.target.value)}
+              value={otpCode}
+              id=""
+              required
+              maxLength={6}
+            />
+            {otpCode.length > 0 && (
+              <span className="absolute inset-y-11 right-3 flex items-center">
+                {isVerified ? (
+                  <Check className="text-green-500 w-5 h-5" />
+                ) : (
+                  <X className="text-red-500 w-5 h-5" />
+                )}
+              </span>
+            )}
+          </div>
+        )}
+        {state === "Sign Up" && (
+          <p
+            onClick={sendOtpCode}
+            className="bg-green-500 text-center text-white w-full py-2 rounded-md text-base cursor-pointer"
+          >
+            Send Email
+          </p>
+        )}
+
         <button className="bg-primary text-white w-full py-2 rounded-md text-base">
           {state === "Sign Up" ? "Create Account" : "Login"}
         </button>
+
         {state === "Sign Up" ? (
           <p className="">
             Already have an account?{" "}
