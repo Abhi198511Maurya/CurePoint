@@ -153,7 +153,7 @@ const Login = () => {
         </div>
         {state === "Sign Up" && (
           <div className="w-full relative">
-            <p>Enter OTPCode</p>
+            <p>Enter OTP Code</p>
             <input
               className={`border rounded w-full p-2 mt-1 focus:outline-none  ${isVerified ? "border-green-500" : otpCode.length > 0 ? "border-red-500" : "border-gray-300"}`}
               type="text"
@@ -179,7 +179,7 @@ const Login = () => {
             onClick={sendOtpCode}
             className="bg-green-500 text-center text-white w-full py-2 rounded-md text-base cursor-pointer"
           >
-            Send Email
+            Send OTP
           </p>
         )}
 

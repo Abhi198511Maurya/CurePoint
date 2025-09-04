@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from "cloudinary";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
 
 const connectCloudinary = async () => {
   cloudinary.config({
@@ -8,4 +9,12 @@ const connectCloudinary = async () => {
   });
 };
 
-export default connectCloudinary;
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "curepoint_DEV",
+    allowerdFormat: ["png", "jpg", "jpeg"],
+  },
+});
+
+export { connectCloudinary, storage };

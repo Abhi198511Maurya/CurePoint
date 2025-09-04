@@ -1,4 +1,5 @@
 import express from "express";
+import multer from "multer";
 import {
   bookAppointment,
   cancelAppointment,
@@ -14,7 +15,9 @@ import {
   verifyRazorpay,
 } from "../controllers/userController.js";
 import authUser from "../middlewares/authUser.js";
-import upload from "../middlewares/multer.js";
+import { storage } from "../config/cloudinary.js";
+
+const upload = multer({ storage });
 
 const userRouter = express.Router();
 

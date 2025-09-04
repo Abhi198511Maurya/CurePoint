@@ -8,9 +8,12 @@ import {
   loginAdmin,
   logoutAdmin,
 } from "../controllers/adminController.js";
-import upload from "../middlewares/multer.js";
 import authAdmin from "../middlewares/authAdmin.js";
 import { changeAvailablity } from "../controllers/doctorController.js";
+import { storage } from "../config/cloudinary.js";
+import multer from "multer";
+
+const upload = multer({ storage });
 
 const adminRouter = express.Router();
 

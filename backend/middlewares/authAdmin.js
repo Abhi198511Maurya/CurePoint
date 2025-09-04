@@ -1,30 +1,21 @@
 import jwt from "jsonwebtoken";
+import CustomError from "../utils/CustomError.js";
+import AsyncHandler from "../utils/asyncHandler.js";
 
 // admin authentication middleware
-const authAdmin = async (req, res, next) => {
-  try {
-    const { atoken } = req.cookies;
+const authAdmin = AsyncHandler(async (req, res, next) => {
+  const { atoken } = req.cookies;
 
-    if (!atoken) {
-      return res.json({
-        success: false,
-        message: "Admin not authorized login again!",
-      });
-    }
-    const tokenDecode = jwt.verify(atoken, process.env.JWT_SECRET);
-
-    if (tokenDecode !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD) {
-      return res.json({
-        success: false,
-        message: "Not Authorized Login again",
-      });
-    }
-
-    next();
-  } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: error.message });
+  if (!atoken) {
+    throw new CustomError(401, "Admin not authorized login again!");
   }
-};
+  const tokenDecode = jwt.verify(atoken, process.env.JWT_SECRET);
+
+  if (tokenDecode !== process.env.ADMIN_EMAIL + process.env.ADMIN_PASSWORD) {
+    throw new CustomError(401, "Not authorized login again!");
+  }
+
+  next();
+});
 
 export default authAdmin;

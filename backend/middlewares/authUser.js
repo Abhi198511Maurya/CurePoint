@@ -1,23 +1,17 @@
 import jwt from "jsonwebtoken";
+import CustomError from "../utils/CustomError.js";
+import AsyncHandler from "../utils/asyncHandler.js";
 
 // User authentication middleware
-const authUser = async (req, res, next) => {
-  try {
-    const { utoken } = req.cookies;
-    if (!utoken) {
-      return res.json({
-        success: false,
-        message: "User not authorized login again!",
-      });
-    }
-    const tokenDecode = jwt.verify(utoken, process.env.JWT_SECRET);
-    res.locals.userId = tokenDecode.id;
-
-    next();
-  } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: error.message });
+const authUser = AsyncHandler(async (req, res, next) => {
+  const { utoken } = req.cookies;
+  if (!utoken) {
+    throw new CustomError(401, "User not authorized login again!");
   }
-};
+  const tokenDecode = jwt.verify(utoken, process.env.JWT_SECRET);
+  res.locals.userId = tokenDecode.id;
+
+  next();
+});
 
 export default authUser;
