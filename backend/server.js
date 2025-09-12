@@ -17,11 +17,17 @@ connectDB();
 connectCloudinary();
 
 const allowedOrigins = [process.env.ADMIN_URL, process.env.PATIENT_URL];
-// middlewares
+
 app.use(express.json());
 app.use(
   cors({
-    origin: process.env.PATIENT_URL,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   }),
 );
