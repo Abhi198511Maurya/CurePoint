@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import CustomError from "../utils/CustomError.js";
-import AsyncHandler from "../utils/asyncHandler.js";
+import AsyncHandler from "../utils/AsyncHandler.js";
 
 // User authentication middleware
 const authUser = AsyncHandler(async (req, res, next) => {

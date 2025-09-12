@@ -9,7 +9,7 @@ import transporter from "../config/nodemailer.js";
 import otpModel from "../models/otpModel.js";
 import CustomError from "../utils/CustomError.js";
 import SuccessResponse from "../utils/SuccessResponse.js";
-import AsyncHandler from "../utils/asyncHandler.js";
+import AsyncHandler from "../utils/AsyncHandler.js";
 
 // API to register user
 const registerUser = AsyncHandler(async (req, res) => {

@@ -6,7 +6,7 @@ import appointmentModel from "../models/appointmentModel.js";
 import userModel from "../models/userModel.js";
 import CustomError from "../utils/CustomError.js";
 import SuccessResponse from "../utils/SuccessResponse.js";
-import AsyncHandler from "../utils/asyncHandler.js";
+import AsyncHandler from "../utils/AsyncHandler.js";
 
 // API for adding doctor
 const addDoctor = AsyncHandler(async (req, res) => {

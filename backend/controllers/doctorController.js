@@ -4,7 +4,7 @@ import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js";
 import SuccessResponse from "../utils/SuccessResponse.js";
 import CustomError from "../utils/CustomError.js";
-import AsyncHandler from "../utils/asyncHandler.js";
+import AsyncHandler from "../utils/AsyncHandler.js";
 
 const changeAvailablity = AsyncHandler(async (req, res) => {
   const { docId } = req.body;

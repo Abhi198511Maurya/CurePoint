@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import CustomError from "../utils/CustomError.js";
-import AsyncHandler from "../utils/asyncHandler.js";
+import AsyncHandler from "../utils/AsyncHandler.js";
 
 // Doctor authentication middleware
 const authDoctor = AsyncHandler(async (req, res, next) => {
