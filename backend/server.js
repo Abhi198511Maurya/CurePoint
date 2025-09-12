@@ -12,6 +12,7 @@ import errorHandler from "./middlewares/errorHandler.js";
 // app config
 const app = express();
 const port = process.env.PORT || 4000;
+
 connectDB();
 connectCloudinary();
 
@@ -19,7 +20,7 @@ connectCloudinary();
 app.use(express.json());
 app.use(
   cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: [process.env.ADMIN_URL, process.env.PETIENT_URL],
     credentials: true,
   }),
 );
