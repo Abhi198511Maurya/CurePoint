@@ -3,6 +3,7 @@ import multer from "multer";
 import {
   bookAppointment,
   cancelAppointment,
+  getMe,
   getProfile,
   listAppointment,
   loginUser,
@@ -29,6 +30,7 @@ userRouter.post("/send-otp", sendOtp);
 userRouter.post("/verify-otp", verifyOtp);
 
 userRouter.get("/get-profile", authUser, getProfile);
+userRouter.get("/me", authUser, getMe);
 userRouter.post(
   "/update-profile",
   upload.single("image"),

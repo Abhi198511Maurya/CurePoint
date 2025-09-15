@@ -58,6 +58,14 @@ const logoutDoctor = AsyncHandler(async (req, res) => {
   return SuccessResponse(res, "logged out!");
 });
 
+const getMe = AsyncHandler(async (req, res) => {
+  const token = req.cookies.dtoken;
+  if (!token) {
+    throw new CustomError(401, "Doctor not authenticated!");
+  }
+  return SuccessResponse(res, "Get doctor's Info!", { token });
+});
+
 // API to get appointments of a doctor
 const appointmentsDoctor = AsyncHandler(async (req, res) => {
   const { docId } = res.locals;
@@ -153,6 +161,7 @@ export {
   doctorList,
   loginDoctor,
   logoutDoctor,
+  getMe,
   appointmentsDoctor,
   appointmentCancel,
   appointmentComplete,

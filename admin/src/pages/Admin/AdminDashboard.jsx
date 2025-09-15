@@ -4,15 +4,19 @@ import { AdminContext } from "../../context/AdminContext";
 import { useEffect } from "react";
 import { assets } from "../../assets/assets";
 import { AppContext } from "../../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const { dashData, getDashData, cancelAppointment, admin } =
     useContext(AdminContext);
+  const navigate = useNavigate();
   const { slotDateFormat } = useContext(AppContext);
 
   useEffect(() => {
     if (admin) {
       getDashData();
+    } else {
+      navigate("/");
     }
   }, [admin]);
 
@@ -99,4 +103,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

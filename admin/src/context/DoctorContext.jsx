@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 export const DoctorContext = createContext();
 
@@ -94,6 +95,19 @@ const DoctorContextProvider = (props) => {
     }
   };
 
+  const getMe = async () => {
+    try {
+      const { data } = await axios.get(backendUrl + "/api/doctor/me", {
+        withCredentials: true,
+      });
+      if (data.success) {
+        setDoctor(data.token);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   const value = {
     backendUrl,
     doctor,
@@ -110,6 +124,10 @@ const DoctorContextProvider = (props) => {
     setProfileData,
     getProfileData,
   };
+
+  useEffect(() => {
+    getMe();
+  }, []);
 
   return (
     <DoctorContext.Provider value={value}>

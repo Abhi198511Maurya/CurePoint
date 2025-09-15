@@ -5,6 +5,8 @@ import { useContext } from "react";
 import { AdminContext } from "../../context/AdminContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 const AddDoctor = () => {
   const [docImg, setDocImg] = useState(false);
@@ -19,7 +21,8 @@ const AddDoctor = () => {
   const [address1, setAddress1] = useState("");
   const [address2, setAddress2] = useState("");
 
-  const { backendUrl } = useContext(AdminContext);
+  const { backendUrl, admin } = useContext(AdminContext);
+  const navigate = useNavigate();
 
   const onSubmithandle = async (event) => {
     event.preventDefault();
@@ -72,6 +75,12 @@ const AddDoctor = () => {
       console.log(error);
     }
   };
+
+  useEffect(() => {
+    if (!admin) {
+      navigate("/");
+    }
+  });
 
   return (
     <form onSubmit={onSubmithandle} className="m-5 w-full">

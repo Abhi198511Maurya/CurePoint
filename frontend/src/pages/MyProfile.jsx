@@ -1,17 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { assets } from "../assets/assets";
 import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const MyProfile = () => {
   const {
+    user,
     userProfileData,
     setUserProfileData,
     backendUrl,
     loadUserProfileData,
   } = useContext(AppContext);
+
+  const navigate = useNavigate();
 
   const [isEdit, setIsEdit] = useState(false);
   const [image, setImage] = useState(false);
@@ -44,6 +48,12 @@ const MyProfile = () => {
       toast.error(error.message);
     }
   };
+
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, [user]);
 
   return (
     userProfileData && (
@@ -166,7 +176,7 @@ const MyProfile = () => {
               >
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-                <option value="Other">other</option>
+                <option value="Other">Other</option>
               </select>
             ) : (
               <p className="text-gray-400">{userProfileData.gender}</p>

@@ -6,11 +6,13 @@ import { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const DoctorProfile = () => {
   const { doctor, profileData, setProfileData, getProfileData, backendUrl } =
     useContext(DoctorContext);
   const { currency } = useContext(AppContext);
+  const navigate = useNavigate();
 
   const [isEdit, setIsEdit] = useState(false);
 
@@ -42,6 +44,8 @@ const DoctorProfile = () => {
   useEffect(() => {
     if (doctor) {
       getProfileData();
+    } else {
+      navigate("/");
     }
   }, [doctor]);
 

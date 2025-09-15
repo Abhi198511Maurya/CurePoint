@@ -45,6 +45,19 @@ const AppContextProvider = (props) => {
     }
   };
 
+  const getMe = async () => {
+    try {
+      const { data } = await axios.get(backendUrl + "/api/user/me", {
+        withCredentials: true,
+      });
+      if (data.success) {
+        setUser(data.token);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   const value = {
     doctors,
     getDoctorsData,
@@ -59,6 +72,7 @@ const AppContextProvider = (props) => {
 
   useEffect(() => {
     getDoctorsData();
+    getMe();
   }, []);
 
   useEffect(() => {

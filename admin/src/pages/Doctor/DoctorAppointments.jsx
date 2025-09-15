@@ -3,6 +3,7 @@ import { useContext } from "react";
 import { DoctorContext } from "../../context/DoctorContext";
 import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
+import { useNavigate } from "react-router-dom";
 
 const DoctorAppointments = () => {
   const {
@@ -13,10 +14,13 @@ const DoctorAppointments = () => {
     cancelAppointment,
   } = useContext(DoctorContext);
   const { calculateAge, slotDateFormat, currency } = useContext(AppContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (doctor) {
       getAppointments();
+    } else {
+      navigate("/");
     }
   }, [doctor]);
 

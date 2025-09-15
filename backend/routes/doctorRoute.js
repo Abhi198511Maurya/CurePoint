@@ -6,6 +6,7 @@ import {
   doctorDashboard,
   doctorList,
   doctorProfile,
+  getMe,
   loginDoctor,
   logoutDoctor,
   updateDoctorProfile,
@@ -16,6 +17,7 @@ const doctorRouter = express.Router();
 
 doctorRouter.post("/login", loginDoctor);
 doctorRouter.post("/logout", logoutDoctor);
+doctorRouter.get("/me", authDoctor, getMe);
 doctorRouter.get("/list", doctorList);
 doctorRouter.get("/appointments", authDoctor, appointmentsDoctor);
 doctorRouter.post("/complete-appointment", authDoctor, appointmentComplete);

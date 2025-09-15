@@ -111,6 +111,8 @@ const MyAppointments = () => {
   useEffect(() => {
     if (user) {
       getUserAppointments();
+    } else {
+      navigate("/");
     }
   }, [user]);
 

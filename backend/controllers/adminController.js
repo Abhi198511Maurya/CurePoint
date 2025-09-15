@@ -106,6 +106,14 @@ const logoutAdmin = AsyncHandler(async (req, res) => {
   return SuccessResponse(res, "logged out!");
 });
 
+const getMe = AsyncHandler(async (req, res) => {
+  const token = req.cookies.atoken;
+  if (!token) {
+    throw new CustomError(401, "Admin not authenticated!");
+  }
+  return SuccessResponse(res, "Get admin's Info!", { token });
+});
+
 // API to get all doctors list for admin panel
 const allDoctors = AsyncHandler(async (req, res) => {
   const doctors = await doctorModel.find({}).select("-password");
@@ -165,6 +173,7 @@ export {
   addDoctor,
   loginAdmin,
   logoutAdmin,
+  getMe,
   allDoctors,
   appointmentsAdmin,
   appointmentCancel,

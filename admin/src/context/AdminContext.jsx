@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createContext } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 export const AdminContext = createContext();
 
@@ -95,6 +96,19 @@ const AdminContextProvider = (props) => {
     }
   };
 
+  const getMe = async () => {
+    try {
+      const { data } = await axios.get(backendUrl + "/api/admin/me", {
+        withCredentials: true,
+      });
+      if (data.success) {
+        setAdmin(data.token);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   const value = {
     admin,
     setAdmin,
@@ -109,6 +123,10 @@ const AdminContextProvider = (props) => {
     dashData,
     getDashData,
   };
+
+  useEffect(() => {
+    getMe();
+  }, []);
 
   return (
     <AdminContext.Provider value={value}>

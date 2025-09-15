@@ -2,14 +2,18 @@ import React from "react";
 import { useContext } from "react";
 import { AdminContext } from "../../context/AdminContext";
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const DoctorsList = () => {
   const { doctors, admin, getAllDoctors, changeAvailability } =
     useContext(AdminContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (admin) {
       getAllDoctors();
+    } else {
+      navigate("/");
     }
   }, [admin]);
 

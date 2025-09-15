@@ -4,6 +4,7 @@ import { DoctorContext } from "../../context/DoctorContext";
 import { useEffect } from "react";
 import { assets } from "../../assets/assets";
 import { AppContext } from "../../context/AppContext";
+import { useNavigate } from "react-router-dom";
 
 const DoctorDashboard = () => {
   const {
@@ -14,10 +15,13 @@ const DoctorDashboard = () => {
     completeAppointment,
   } = useContext(DoctorContext);
   const { slotDateFormat, currency } = useContext(AppContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (doctor) {
       getDashData();
+    } else {
+      navigate("/");
     }
   }, [doctor]);
 

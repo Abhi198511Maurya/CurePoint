@@ -4,15 +4,19 @@ import { AdminContext } from "../../context/AdminContext";
 import { useEffect } from "react";
 import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
+import { useNavigate } from "react-router-dom";
 
 const AllAppointments = () => {
   const { admin, appointments, getAllAppointments, cancelAppointment } =
     useContext(AdminContext);
   const { calculateAge, slotDateFormat, currency } = useContext(AppContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (admin) {
       getAllAppointments();
+    } else {
+      navigate("/");
     }
   }, [admin]);
 

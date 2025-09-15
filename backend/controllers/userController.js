@@ -205,6 +205,14 @@ const getProfile = AsyncHandler(async (req, res) => {
   return SuccessResponse(res, "Get user's profile data!", { userData });
 });
 
+const getMe = AsyncHandler(async (req, res) => {
+  const token = req.cookies.utoken;
+  if (!token) {
+    throw new CustomError(401, "User not authenticated!");
+  }
+  return SuccessResponse(res, "Get user's Info!", { token });
+});
+
 // API to update user profile
 const updateProfile = AsyncHandler(async (req, res) => {
   const { userId } = res.locals;
@@ -368,6 +376,7 @@ export {
   sendOtp,
   verifyOtp,
   getProfile,
+  getMe,
   updateProfile,
   bookAppointment,
   listAppointment,
