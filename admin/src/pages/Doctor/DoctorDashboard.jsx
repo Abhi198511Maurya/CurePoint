@@ -23,7 +23,7 @@ const DoctorDashboard = () => {
     } else {
       navigate("/");
     }
-  }, [doctor]);
+  }, [doctor, dashData]);
 
   return (
     dashData && (

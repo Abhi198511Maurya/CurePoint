@@ -18,7 +18,7 @@ const AdminDashboard = () => {
     } else {
       navigate("/");
     }
-  }, [admin]);
+  }, [admin, dashData]);
 
   return (
     dashData && (
