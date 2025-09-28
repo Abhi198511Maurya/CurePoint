@@ -160,10 +160,15 @@ const sendOtp = AsyncHandler(async (req, res) => {
   }
 
   const mailOption = {
-    from: process.env.SENDER_EMAIL,
-    to: email,
-    subject: "Account verification OTP!",
-    text: `Your otp is ${otpCode}. Verify your account using this OTP!`,
+    from: {
+      name: "Abhishek Maurya",
+      email: process.env.SENDER_EMAIL,
+    },
+    to: [email],
+    templateId: process.env.TEMPLATE_ID,
+    dynamicTemplateData: {
+      otp: otpCode,
+    },
   };
 
   await sgMail.send(mailOption);
