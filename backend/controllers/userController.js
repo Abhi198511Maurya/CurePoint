@@ -1,11 +1,11 @@
 import validator from "validator";
 import bcrypt from "bcrypt";
+import sgMail from "@sendgrid/mail";
 import userModel from "../models/userModel.js";
 import jwt from "jsonwebtoken";
 import doctorModel from "../models/doctorModel.js";
 import appointmentModel from "../models/appointmentModel.js";
 import razorpay from "razorpay";
-import transporter from "../config/nodemailer.js";
 import otpModel from "../models/otpModel.js";
 import CustomError from "../utils/CustomError.js";
 import SuccessResponse from "../utils/SuccessResponse.js";
@@ -166,7 +166,7 @@ const sendOtp = AsyncHandler(async (req, res) => {
     text: `Your otp is ${otpCode}. Verify your account using this OTP!`,
   };
 
-  await transporter.sendMail(mailOption);
+  await sgMail.send(mailOption);
 
   return SuccessResponse(res, "OTP sent successfully!");
 });

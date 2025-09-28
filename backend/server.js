@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import "dotenv/config";
+import sgMail from "@sendgrid/mail";
 import connectDB from "./config/mongodb.js";
 import { connectCloudinary } from "./config/cloudinary.js";
 import adminRouter from "./routes/adminRoute.js";
@@ -32,6 +33,7 @@ app.use(
   }),
 );
 app.use(cookieParser());
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 // api endpoints
 app.use("/api/admin", adminRouter);
